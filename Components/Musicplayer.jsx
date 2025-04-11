@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import musicList from "../assets/music";
-import "../index.css";
+import "./Music.css";
 import {
   FaPlay,
   FaPause,
@@ -39,7 +39,9 @@ function App() {
   const handleNextSong = () => {
     setHistory((prevHistory) => [...prevHistory, currentSongIndex]); // Store current song in history
     if (isShuffle && shuffleQueue.length > 0) {
-      setCurrentSongIndex(shuffleQueue.shift());
+      const [nextIndex, ...rest] = shuffleQueue;
+      setCurrentSongIndex(nextIndex);
+      setShuffleQueue(rest);
     } else {
       setCurrentSongIndex((prevIndex) => (prevIndex + 1) % musicList.length);
     }
@@ -77,7 +79,8 @@ function App() {
     audioRef.current.currentTime = seekTime;
     setCurrentTime(seekTime);
   };
-
+  console.log(currentSongIndex);
+  console.log(shuffleQueue);
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
@@ -88,7 +91,7 @@ function App() {
     <div className="container">
       <div className="box">
         <div className="image-container">
-          <img src={currentSong.image} alt="Song Cover" />
+          <img src={currentSong.images} alt="song-image" />
         </div>
 
         <div className="song-info">
@@ -108,7 +111,7 @@ function App() {
           type="range"
           min="0"
           max="100"
-          value={(currentTime / duration) * 100}
+          value={duration ? (currentTime / duration) * 100 : 0}
           onChange={handleSeek}
         />
 
